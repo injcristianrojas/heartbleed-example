@@ -43,11 +43,11 @@ data that can be harvested later by the exploit. The `stimulate_server.sh`
 script does just that. The following is its usage and options:
 
 ```Shell
-Usage: heartbleed.py server_ip [sleep]
+Usage: stimulate_server.sh server_ip [sleep]
 
 Options:
   server_ip: IP of server to be fed with data
-  sleep: Time between requests (in seconds)
+  sleep: Time between requests (in seconds). Default 1 second.
 ```
 
 ## Exploit.
