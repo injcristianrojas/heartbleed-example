@@ -15,7 +15,7 @@ Usually I teach my classes in a very low bandwidth environment, so I prefer
 to ask my students to prep the machines prior to class. If this is your case,
 download the image like this:
 
-```Shell
+```shell
 docker pull andrewmichaelsmith/docker-heartbleed
 ```
 
@@ -23,18 +23,12 @@ docker pull andrewmichaelsmith/docker-heartbleed
 
 On a terminal window, run the command:
 
-```Shell
-docker run -t -i andrewmichaelsmith/docker-heartbleed /bin/bash
+```shell
+docker run --name heartbleed-victim --rm -p 80:80 -p 443:443 -it andrewmichaelsmith/docker-heartbleed
 ```
 
-The machine will start and you will be inside, so you can get its IP address
-using `ifconfig`, or start/stop/restart the Apache server using Ubuntu's
-service commands. Nevertheless, the server is not started yet. Issue this
-inside the machine:
-
-```Shell
-service apache2 start
-```
+The machine will start and expose the 80 and 443 ports, so you can use the
+server from localhost.
 
 ## Stimulate the server
 
@@ -42,12 +36,12 @@ Before exploiting, you must stimulate the server with potentially sensitive
 data that can be harvested later by the exploit. The `stimulate_server.sh`
 script does just that. The following is its usage and options:
 
-```Shell
-Usage: stimulate_server.sh server_ip [sleep]
+```shell
+Usage: stimulate_server.sh [server_address] [sleep]
 
 Options:
-  server_ip: IP of server to be fed with data
-  sleep: Time between requests (in seconds). Default 1 second.
+  server_address: address of server to be fed with data. Default is 127.0.0.1.
+  sleep: Time between requests (in seconds). Default is 1 second.
 ```
 
 ## Exploit.
@@ -56,7 +50,7 @@ This repo includes
 [Eelsivart's Heartbleed tester based in Python](https://gist.github.com/eelsivart/10174134).
 You can use it calling it with python. This is its help output:
 
-```Shell
+```shell
 defribulator v1.16
 A tool to test and exploit the TLS heartbeat vulnerability aka heartbleed (CVE-2014-0160)
 Usage: heartbleed.py server [options]
