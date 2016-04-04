@@ -8,6 +8,8 @@ for OpenSSL's Heartbleed vulnerability demostration.
 ## Requirements
 
 * Docker 1.3.2 or later
+* Python 2.7
+* cURL
 
 ## Pre-setup (optional)
 
@@ -33,11 +35,11 @@ server from localhost.
 ## Stimulate the server
 
 Before exploiting, you must stimulate the server with potentially sensitive
-data that can be harvested later by the exploit. The `stimulate_server.sh`
+data that can be harvested later by the exploit. The `stimulate_server.py`
 script does just that. The following is its usage and options:
 
 ```shell
-Usage: stimulate_server.sh [server_address] [sleep]
+Usage: stimulate_server.py [-a server_address] [-t sleep]
 
 Options:
   server_address: address of server to be fed with data. Default is 127.0.0.1.
