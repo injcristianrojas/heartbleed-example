@@ -1,0 +1,3 @@
+[submodule "docker-heartbleed"]
+	path = docker-heartbleed
+	url = https://github.com/andrewmichaelsmith/docker-heartbleed.git
