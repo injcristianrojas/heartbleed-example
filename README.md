@@ -8,13 +8,14 @@ for OpenSSL's Heartbleed vulnerability demostration.
 ## Requirements
 
 * Docker 1.3.2 or later
+* Docker Compose 1.6.2 or later
 * Python 2.7
 * cURL
 
 ## Pre-setup (optional)
 
-Usually I teach my classes in a very low bandwidth environment, so I prefer
-to ask my students to prep the machines prior to class. If this is your case,
+Usually I teach my classes in a very low bandwidth environment, so I prefer to
+ask my students to prep the machines prior to class. If this is your case,
 download the image like this:
 
 ```shell
@@ -26,17 +27,19 @@ docker pull andrewmichaelsmith/docker-heartbleed
 On a terminal window, run the command:
 
 ```shell
-docker run --name heartbleed-victim --rm -p 80:80 -p 443:443 -it andrewmichaelsmith/docker-heartbleed
+docker-compose up
 ```
 
 The machine will start and expose the 80 and 443 ports, so you can use the
-server from localhost.
+server from localhost. To stop the server wien you're done, press
+<kbd>Ctrl</kbd>+<kbd>C</kbd>.
 
 ## Stimulate the server
 
-Before exploiting, you must stimulate the server with potentially sensitive
-data that can be harvested later by the exploit. The `stimulate_server.py`
-script does just that. The following is its usage and options:
+Before exploiting, you must stimulate the server with potentially sensitive data
+that can be harvested later by the exploit. The `stimulate_server.py` script
+does that, sending random credentials to the server via HTTP POST requests. The
+following is its usage and options:
 
 ```shell
 Usage: stimulate_server.py [-a server_address] [-t sleep]
@@ -50,7 +53,8 @@ Options:
 
 This repo includes
 [Eelsivart's Heartbleed tester based in Python](https://gist.github.com/eelsivart/10174134).
-You can use it calling it with python. This is its help output:
+You can use it calling it with python. This is its help
+output:
 
 ```shell
 defribulator v1.16
