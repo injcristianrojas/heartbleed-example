@@ -7,10 +7,12 @@ for OpenSSL's Heartbleed vulnerability demostration.
 
 ## Requirements
 
-* Docker 1.3.2 or later
-* Docker Compose 1.6.2 or later
+* Docker:
+  * Docker 1.3.2 or later
+  * Docker Compose 1.6.2 or later
 * Python 2.7
 * cURL
+* Alternatively, you can use Podman (3.2.2 or later) instead of Docker.
 
 ## Pre-setup (optional)
 
@@ -19,7 +21,7 @@ ask my students to prep the machines prior to class. If this is your case,
 download the image like this:
 
 ```shell
-docker pull andrewmichaelsmith/docker-heartbleed
+docker pull docker.io/andrewmichaelsmith/docker-heartbleed
 ```
 
 ## Run the server
@@ -30,8 +32,8 @@ On a terminal window, run the command:
 docker-compose up
 ```
 
-The machine will start and expose the 80 and 443 ports, so you can use the
-server from localhost. To stop the server wien you're done, press
+The machine will start and expose ports 8080(80) and 8443(443), so you can use
+the server from localhost. To stop the server wien you're done, press
 <kbd>Ctrl</kbd>+<kbd>C</kbd>.
 
 ## Stimulate the server

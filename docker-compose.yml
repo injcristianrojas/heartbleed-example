@@ -1,9 +1,9 @@
-version: '2'
+version: '3.8'
 
 services:
   victim:
-    image: andrewmichaelsmith/docker-heartbleed
+    image: docker.io/andrewmichaelsmith/docker-heartbleed
     ports:
-      - "80:80"
-      - "443:443"
+      - "8080:80"
+      - "8443:443"
     
